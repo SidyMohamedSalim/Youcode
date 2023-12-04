@@ -61,6 +61,7 @@ export const LogoutButton = (props: LoggedInButtonProps) => {
             </DropdownMenuItem>
           </AlertDialogTrigger>
         </DropdownMenuContent>
+
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
