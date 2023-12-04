@@ -3,7 +3,7 @@ import { Typography } from "../ui/Typography";
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { SiteConfig } from "@/lib/SiteConfig";
 import { getAuthSession } from "@/lib/auth";
-import AuthButton from "./AuthButton";
+import { AuthButton } from "../features/auth/AuthButton";
 
 export async function Header() {
   const session = await getAuthSession();
@@ -20,7 +20,7 @@ export async function Header() {
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-1">
             <ThemeToggle />
-            {session?.user.id ? <p>{session.user.name}</p> : <AuthButton />}
+            <AuthButton />
           </nav>
         </div>
       </div>
