@@ -1,3 +1,12 @@
+import {
+  Layout,
+  LayoutActions,
+  LayoutContent,
+  LayoutHeader,
+  LayoutTitle,
+} from "@/components/layout/layout";
+import { Typography } from "@/components/ui/Typography";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -9,64 +18,66 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { prisma } from "@/db/prisma";
+import { getRequiredAuthSession } from "@/lib/auth";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const page = async () => {
-  const courses = await prisma.course.findMany();
+  const session = await getRequiredAuthSession();
+  const courses = await prisma.course.findMany({
+    where: { creatorId: session.user.id },
+  });
   return (
-    <div>
-      <Card className="mx-auto mt-4 max-w-xl space-y-0">
-        <CardHeader className="space-y-0">
-          <div className="flex items-center justify-between">
-            <CardTitle>
-              <h3 className="text-xl">Courses</h3>
-            </CardTitle>
-            <Button variant={"outline"}>New Course</Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Image</TableHead>
-                <TableHead>Name</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="">
-              {courses.map((course) => (
-                <TableRow key={course.id}>
-                  <TableCell>
-                    <div className="avatar">
-                      <div className="flex h-10 w-10 items-center justify-center rounded bg-neutral-200 dark:bg-neutral-800">
-                        {course.image ? (
-                          <Image
-                            width={40}
-                            height={40}
-                            alt={course.name}
-                            src={course.image}
-                          />
-                        ) : (
-                          <p>
-                            {course.name
-                              .split("")
-                              .slice(0, 2)
-                              .join("")
-                              .toLocaleUpperCase()
-                              .toString()}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="font-bold">{course.name}</TableCell>
+    <Layout>
+      <LayoutHeader className="flex  items-center justify-between">
+        <LayoutTitle>Courses</LayoutTitle>
+      </LayoutHeader>
+      <LayoutContent>
+        <Card>
+          <CardContent className="mt-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Image</TableHead>
+                  <TableHead>Name</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </div>
+              </TableHeader>
+              <TableBody>
+                {courses.map((course) => (
+                  <TableRow>
+                    <TableCell>
+                      <Avatar className="rounded">
+                        <AvatarFallback>
+                          {course.name
+                            .split("")
+                            .slice(0, 1)
+                            .join("")
+                            .toUpperCase()}
+                        </AvatarFallback>
+                        <AvatarImage
+                          src={course.image}
+                          alt={course.name}
+                        ></AvatarImage>
+                      </Avatar>
+                    </TableCell>
+                    <TableCell>
+                      <Typography
+                        as={Link}
+                        variant="large"
+                        href={`/admin/courses/${course.id}`}
+                      >
+                        {course.name}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </LayoutContent>
+    </Layout>
   );
 };
 

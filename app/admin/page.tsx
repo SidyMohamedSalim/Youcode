@@ -1,19 +1,22 @@
-import { buttonVariants } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import clsx from "clsx";
+import {
+  Layout,
+  LayoutContent,
+  LayoutHeader,
+  LayoutTitle,
+} from "@/components/layout/layout";
 import Link from "next/link";
 import React from "react";
 
 const page = () => {
   return (
-    <div>
-      <Link
-        href={"admin/courses"}
-        className={clsx(buttonVariants({ variant: "ghost" }))}
-      >
-        See the course
-      </Link>
-    </div>
+    <Layout>
+      <LayoutHeader>
+        <LayoutTitle>Courses</LayoutTitle>
+      </LayoutHeader>
+      <LayoutContent>
+        <Link href={"/admin/courses"}>Courses</Link>
+      </LayoutContent>
+    </Layout>
   );
 };
 
