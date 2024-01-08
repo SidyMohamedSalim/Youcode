@@ -29,6 +29,7 @@ import { notFound } from "next/navigation";
 import React from "react";
 import { getCourse } from "./course.query";
 import { getRequiredAuthSession } from "@/lib/auth";
+import ButtonPagination from "@/features/ButtonPagination";
 
 const page = async ({
   params,
@@ -39,9 +40,7 @@ const page = async ({
 }) => {
   const session = await getRequiredAuthSession();
 
-  const pageParams = searchParams.page;
-
-  const page = Number(pageParams) ?? 0;
+  const page = Number(searchParams.page ?? 0);
 
   const course = await getCourse({
     courseId: params.courdId,
@@ -74,20 +73,20 @@ const page = async ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {course?.users.map((user) => (
+                  {course.users?.map((user) => (
                     <TableRow>
                       <TableCell>
                         <Avatar className="rounded">
                           <AvatarFallback>
-                            {user?.user?.email
+                            {user?.email
                               ?.split("")
                               .slice(0, 1)
                               .join("")
                               .toUpperCase()}
                           </AvatarFallback>
                           <AvatarImage
-                            src={user.user.image ?? ""}
-                            alt={user.user.name ?? ""}
+                            src={user.image ?? ""}
+                            alt={user.name ?? ""}
                           ></AvatarImage>
                         </Avatar>
                       </TableCell>
@@ -97,11 +96,13 @@ const page = async ({
                           variant="small"
                           href={`/admin/courses`}
                         >
-                          {user.user.name ?? user.user.email}
+                          {user.name ?? user.email}
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={"secondary"}>Active</Badge>
+                        <Badge variant={"secondary"}>
+                          {user.canceled ? "Mute" : "Active"}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant={"secondary"}>
@@ -113,19 +114,28 @@ const page = async ({
                 </TableBody>
               </Table>
             </CardContent>
+            <CardFooter className="flex justify-end">
+              <ButtonPagination
+                totalPages={course._count?.lessons ?? 0 / 5}
+                currentPage={page}
+                baseUrl={`/admin/courses/${course.id}`}
+              />
+            </CardFooter>
           </Card>
           <Card className="col-span-2">
             <CardHeader className="text-center">
               <CardTitle>🧨 Begin JavaScript</CardTitle>
             </CardHeader>
             <CardContent>
-              <Button variant={"destructive"}>DRAFT</Button>
+              <Button variant={"destructive"} size={"sm"}>
+                DRAFT
+              </Button>
               <div className="my-4 font-light">
                 <Typography variant={"small"}>
-                  {course._count.users} users
+                  {course._count?.users ?? 0} users
                 </Typography>
                 <Typography variant={"small"}>
-                  {course._count.lessons} Lessons
+                  {course._count?.lessons ?? 0} Lessons
                 </Typography>
               </div>
             </CardContent>

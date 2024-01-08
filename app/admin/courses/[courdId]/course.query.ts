@@ -8,19 +8,28 @@ export const getCourse = async ({
   courseId: string;
   userId: string;
   CurrentPage: number;
-}) =>
-  await prisma.course.findUnique({
-    where: { id: courseId, creatorId: userId },
+}) => {
+  const courses = await prisma.course.findUnique({
+    where: {
+      creatorId: userId,
+      id: courseId,
+    },
     select: {
+      id: true,
+      image: true,
       name: true,
+      presentation: true,
       users: {
-        take: 0,
+        take: 5,
         skip: Math.max(0, CurrentPage * 5),
         select: {
+          canceledAt: true,
+          id: true,
           user: {
             select: {
-              name: true,
               email: true,
+              name: true,
+              id: true,
               image: true,
             },
           },
@@ -28,9 +37,22 @@ export const getCourse = async ({
       },
       _count: {
         select: {
-          users: true,
           lessons: true,
+          users: true,
         },
       },
     },
   });
+
+  const users = courses?.users.map((user) => {
+    return {
+      canceled: user.canceledAt ? true : false,
+      ...user.user,
+    };
+  });
+
+  return {
+    ...courses,
+    users,
+  };
+};
