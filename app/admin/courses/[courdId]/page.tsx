@@ -6,7 +6,7 @@ import {
 import { Typography } from "@/components/ui/Typography";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -30,6 +30,7 @@ import React from "react";
 import { getCourse } from "./course.query";
 import { getRequiredAuthSession } from "@/lib/auth";
 import ButtonPagination from "@/features/ButtonPagination";
+import { cn } from "@/lib/utils";
 
 const page = async ({
   params,
@@ -91,11 +92,7 @@ const page = async ({
                         </Avatar>
                       </TableCell>
                       <TableCell>
-                        <Typography
-                          as={Link}
-                          variant="small"
-                          href={`/admin/courses`}
-                        >
+                        <Typography variant="small">
                           {user.name ?? user.email}
                         </Typography>
                       </TableCell>
@@ -124,7 +121,7 @@ const page = async ({
           </Card>
           <Card className="col-span-2">
             <CardHeader className="text-center">
-              <CardTitle>🧨 Begin JavaScript</CardTitle>
+              <CardTitle>🧨 {course.name}</CardTitle>
             </CardHeader>
             <CardContent>
               <Button variant={"destructive"} size={"sm"}>
@@ -140,12 +137,18 @@ const page = async ({
               </div>
             </CardContent>
             <CardFooter className="flex flex-col  gap-2">
-              <Button className="w-full" variant={"outline"}>
+              <Link
+                href={"/"}
+                className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+              >
                 Edit
-              </Button>
-              <Button className="w-full" variant={"outline"}>
-                Edit lessons
-              </Button>
+              </Link>
+              <Link
+                href={"/"}
+                className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+              >
+                Edit Lessons
+              </Link>
             </CardFooter>
           </Card>
         </div>
